@@ -564,7 +564,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 setState(() {});
 
                 var loadingScreen = showLoadingScreen(context);
-                Future.delayed(const Duration(milliseconds: 100), () {});
+                Future.delayed(const Duration(milliseconds: 1000), () {});
 
                 if (widget.outputFormat == o.OutputFormat.json) {
                   var json = layers.map((e) => e.toJson()).toList();
