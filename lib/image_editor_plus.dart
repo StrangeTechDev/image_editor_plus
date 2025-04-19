@@ -883,7 +883,6 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                               builder: (context) => ImageEditorDrawing(
                                 image: currentImage,
                                 options: widget.brushOption!,
-                                currentImage: currentImage,
                               ),
                             ),
                           );
@@ -918,7 +917,6 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                               builder: (context) => ImageEditorDrawing(
                                 image: ImageItem(mergedImage!),
                                 options: widget.brushOption!,
-                                currentImage: currentImage,
                               ),
                             ),
                           );
@@ -1857,12 +1855,10 @@ class _FilterAppliedImageState extends State<FilterAppliedImage> {
 class ImageEditorDrawing extends StatefulWidget {
   final ImageItem image;
   final o.BrushOption options;
-  final ImageItem currentImage;
 
   const ImageEditorDrawing({
     super.key,
     required this.image,
-    required this.currentImage,
     this.options = const o.BrushOption(
       showBackground: true,
       translatable: true,
@@ -1918,11 +1914,11 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
     // 减去kToolbarHeight 高度56，减去bottomNavigationBar 高度80，再减去顶部安全距离MediaQuery.of(context).padding.top
     double h = MediaQuery.of(context).size.height - 80 - MediaQuery.of(context).padding.top - 56;
     double screenRatio = w / h;
-    double currentImageRatio = widget.currentImage.width / widget.currentImage.height;
+    double currentImageRatio = widget.image.width / widget.image.height;
     if (screenRatio > currentImageRatio) {
-      w = h * widget.currentImage.width / widget.currentImage.height;
+      w = h * widget.image.width / widget.image.height;
     } else {
-      h = w * widget.currentImage.height / widget.currentImage.width;
+      h = w * widget.image.height / widget.image.width;
     }
 
     return Theme(
