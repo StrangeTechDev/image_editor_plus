@@ -883,6 +883,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                               builder: (context) => ImageEditorDrawing(
                                 image: currentImage,
                                 options: widget.brushOption!,
+                                currentImage: currentImage,
                               ),
                             ),
                           );
@@ -917,6 +918,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                               builder: (context) => ImageEditorDrawing(
                                 image: ImageItem(mergedImage!),
                                 options: widget.brushOption!,
+                                currentImage: currentImage,
                               ),
                             ),
                           );
@@ -1910,6 +1912,17 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
 
   @override
   Widget build(BuildContext context) {
+    double w = MediaQuery.of(context).size.width;
+    // 减去kToolbarHeight 高度56，减去bottomNavigationBar 高度80，再减去顶部安全距离MediaQuery.of(context).padding.top
+    double h = MediaQuery.of(context).size.height - 80 - MediaQuery.of(context).padding.top - 56;
+    double screenRatio = w / h;
+    double currentImageRatio = widget.currentImage.width / widget.currentImage.height;
+    if (screenRatio > currentImageRatio) {
+      w = h * widget.currentImage.width / widget.currentImage.height;
+    } else {
+      h = w * widget.currentImage.height / widget.currentImage.width;
+    }
+
     return Theme(
       data: ImageEditor.theme,
       child: Scaffold(
@@ -1984,27 +1997,28 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
             ),
           ],
         ),
-        body: Screenshot(
-          controller: screenshotController,
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              color:
-                  widget.options.showBackground ? null : currentBackgroundColor,
-              image: widget.options.showBackground
-                  ? DecorationImage(
-                      image: Image.memory(widget.image.bytes).image,
-                      fit: BoxFit.contain,
-                    )
-                  : null,
-            ),
-            child: HandSignature(
-              control: control,
-              color: currentColor,
-              width: 1.0,
-              maxWidth: 7.0,
-              type: SignatureDrawType.shape,
+        body: Center(
+          child: Screenshot(
+            controller: screenshotController,
+            child: Container(
+              height: h,
+              width: w,
+              decoration: BoxDecoration(
+                color: widget.options.showBackground ? null : currentBackgroundColor,
+                image: widget.options.showBackground
+                    ? DecorationImage(
+                        image: Image.memory(widget.image.bytes).image,
+                        fit: BoxFit.contain,
+                      )
+                    : null,
+              ),
+              child: HandSignature(
+                control: control,
+                color: currentColor,
+                width: 1.0,
+                maxWidth: 7.0,
+                type: SignatureDrawType.shape,
+              ),
             ),
           ),
         ),
