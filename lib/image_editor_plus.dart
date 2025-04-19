@@ -1857,10 +1857,12 @@ class _FilterAppliedImageState extends State<FilterAppliedImage> {
 class ImageEditorDrawing extends StatefulWidget {
   final ImageItem image;
   final o.BrushOption options;
+  final ImageItem currentImage;
 
   const ImageEditorDrawing({
     super.key,
     required this.image,
+    required this.currentImage,
     this.options = const o.BrushOption(
       showBackground: true,
       translatable: true,
