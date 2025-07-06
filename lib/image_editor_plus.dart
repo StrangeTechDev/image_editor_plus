@@ -669,13 +669,15 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     viewportSize = MediaQuery.of(context).size;
     pixelRatio = MediaQuery.of(context).devicePixelRatio;
 
-    minScaleFactor = math.min(
-      viewportSize.width / (currentImage.width / pixelRatio),
-      viewportSize.height / (currentImage.height / pixelRatio),
-    );
+    if (currentImage.width > 1 && currentImage.height > 1) {
+      minScaleFactor = math.min(
+        viewportSize.width / (currentImage.width / pixelRatio),
+        viewportSize.height / (currentImage.height / pixelRatio),
+      );
 
-    if (scaleFactor == 1) {
-      resetTransformation();
+      if (scaleFactor == 1) {
+        resetTransformation();
+      }
     }
 
     // widthRatio = currentImage.width / viewportSize.width;
