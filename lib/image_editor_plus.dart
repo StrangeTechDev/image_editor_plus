@@ -564,7 +564,6 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 setState(() {});
 
                 var loadingScreen = showLoadingScreen(context);
-                await Future.delayed(const Duration(milliseconds: 100), () {});
 
                 if (widget.outputFormat == o.OutputFormat.json) {
                   var json = layers.map((e) => e.toJson()).toList();
@@ -616,11 +615,11 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
   double y = 0;
   double z = 0;
 
-  double lastScaleFactor = 1, scaleFactor = 1;
+  double lastScaleFactor = 1, scaleFactor = 1, minScaleFactor = 1;
   double widthRatio = 1, heightRatio = 1, pixelRatio = 1;
 
   resetTransformation() {
-    scaleFactor = 1;
+    scaleFactor = math.max(1, minScaleFactor);
     x = 0;
     y = 0;
     setState(() {});
@@ -661,6 +660,11 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     viewportSize = MediaQuery.of(context).size;
     pixelRatio = MediaQuery.of(context).devicePixelRatio;
 
+    minScaleFactor = math.min(
+      viewportSize.width / currentImage.width,
+      viewportSize.height / currentImage.height,
+    );
+      
     // widthRatio = currentImage.width / viewportSize.width;
     // heightRatio = currentImage.height / viewportSize.height;
     // pixelRatio = math.max(heightRatio, widthRatio);
@@ -1360,7 +1364,7 @@ class _ImageCropperState extends State<ImageCropper> {
     if (widget.availableRatios.isNotEmpty) {
       currentRatio = widget.availableRatios.first.ratio;
     }
-    _controller.currentState?.rotate();
+    _controller.currentState?.rotate(right: true);
 
     super.initState();
   }
@@ -1910,17 +1914,6 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
 
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    // 减去kToolbarHeight 高度56，减去bottomNavigationBar 高度80，再减去顶部安全距离MediaQuery.of(context).padding.top
-    double h = MediaQuery.of(context).size.height - 80 - MediaQuery.of(context).padding.top - 56;
-    double screenRatio = w / h;
-    double currentImageRatio = widget.image.width / widget.image.height;
-    if (screenRatio > currentImageRatio) {
-      w = h * widget.image.width / widget.image.height;
-    } else {
-      h = w * widget.image.height / widget.image.width;
-    }
-
     return Theme(
       data: ImageEditor.theme,
       child: Scaffold(
@@ -1995,28 +1988,27 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
             ),
           ],
         ),
-        body: Center(
-          child: Screenshot(
-            controller: screenshotController,
-            child: Container(
-              height: h,
-              width: w,
-              decoration: BoxDecoration(
-                color: widget.options.showBackground ? null : currentBackgroundColor,
-                image: widget.options.showBackground
-                    ? DecorationImage(
-                        image: Image.memory(widget.image.bytes).image,
-                        fit: BoxFit.contain,
-                      )
-                    : null,
-              ),
-              child: HandSignature(
-                control: control,
-                color: currentColor,
-                width: 1.0,
-                maxWidth: 7.0,
-                type: SignatureDrawType.shape,
-              ),
+        body: Screenshot(
+          controller: screenshotController,
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color:
+                  widget.options.showBackground ? null : currentBackgroundColor,
+              image: widget.options.showBackground
+                  ? DecorationImage(
+                      image: Image.memory(widget.image.bytes).image,
+                      fit: BoxFit.contain,
+                    )
+                  : null,
+            ),
+            child: HandSignature(
+              control: control,
+              color: currentColor,
+              width: 1.0,
+              maxWidth: 7.0,
+              type: SignatureDrawType.shape,
             ),
           ),
         ),
