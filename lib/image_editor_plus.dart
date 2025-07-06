@@ -77,7 +77,8 @@ class ImageEditor extends StatelessWidget {
         !imagePickerOption.captureFromCamera &&
         !imagePickerOption.pickFromGallery) {
       throw Exception(
-          'No image to work with, provide an image or allow the image picker.');
+        'No image to work with, provide an image or allow the image picker.',
+      );
     }
 
     if (image != null) {
@@ -122,9 +123,7 @@ class ImageEditor extends StatelessWidget {
   /// Set custom theme properties default is dark theme with white text
   static ThemeData theme = ThemeData(
     scaffoldBackgroundColor: Colors.black,
-    colorScheme: const ColorScheme.dark(
-      surface: Colors.black,
-    ),
+    colorScheme: const ColorScheme.dark(surface: Colors.black),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.black87,
       iconTheme: IconThemeData(color: Colors.white),
@@ -135,12 +134,8 @@ class ImageEditor extends StatelessWidget {
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Colors.black,
     ),
-    iconTheme: const IconThemeData(
-      color: Colors.white,
-    ),
-    textTheme: const TextTheme(
-      bodyMedium: TextStyle(color: Colors.white),
-    ),
+    iconTheme: const IconThemeData(color: Colors.white),
+    textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
   );
 }
 
@@ -281,108 +276,115 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                   children: [
                     const SizedBox(width: 32),
                     for (var image in images)
-                      Stack(children: [
-                        GestureDetector(
-                          onTap: () async {
-                            var img = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SingleImageEditor(
-                                  image: image,
-                                  outputFormat: o.OutputFormat.jpeg,
+                      Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              var img = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SingleImageEditor(
+                                    image: image,
+                                    outputFormat: o.OutputFormat.jpeg,
+                                  ),
+                                ),
+                              );
+
+                              // print(img);
+
+                              if (img != null) {
+                                image.load(img);
+                                setState(() {});
+                              }
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(
+                                top: 32,
+                                right: 32,
+                                bottom: 32,
+                              ),
+                              width: 200,
+                              height: 300,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                border: Border.all(
+                                  color: Colors.white.withAlpha(80),
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: Image.memory(
+                                  image.bytes,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
-                            );
-
-                            // print(img);
-
-                            if (img != null) {
-                              image.load(img);
-                              setState(() {});
-                            }
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(
-                                top: 32, right: 32, bottom: 32),
-                            width: 200,
-                            height: 300,
-                            decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              border:
-                                  Border.all(color: Colors.white.withAlpha(80)),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: Image.memory(
-                                image.bytes,
-                                fit: BoxFit.cover,
-                              ),
                             ),
                           ),
-                        ),
-                        Positioned(
-                          top: 36,
-                          right: 36,
-                          child: Container(
-                            height: 32,
-                            width: 32,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.black.withAlpha(60),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: IconButton(
-                              iconSize: 20,
-                              padding: const EdgeInsets.all(0),
-                              onPressed: () {
-                                // print('removing');
-                                images.remove(image);
-                                setState(() {});
-                              },
-                              icon: const Icon(Icons.clear_outlined),
-                            ),
-                          ),
-                        ),
-                        if (widget.filtersOption != null)
                           Positioned(
-                            bottom: 32,
-                            left: 0,
+                            top: 36,
+                            right: 36,
                             child: Container(
-                              height: 38,
-                              width: 38,
+                              height: 32,
+                              width: 32,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: Colors.black.withAlpha(100),
-                                borderRadius: const BorderRadius.only(
-                                  topRight: Radius.circular(19),
-                                ),
+                                color: Colors.black.withAlpha(60),
+                                borderRadius: BorderRadius.circular(16),
                               ),
                               child: IconButton(
                                 iconSize: 20,
                                 padding: const EdgeInsets.all(0),
-                                onPressed: () async {
-                                  Uint8List? editedImage = await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ImageFilters(
-                                        image: image.bytes,
-                                        options: widget.filtersOption,
-                                      ),
-                                    ),
-                                  );
-
-                                  if (editedImage != null) {
-                                    image.load(editedImage);
-                                  }
-
+                                onPressed: () {
+                                  // print('removing');
+                                  images.remove(image);
                                   setState(() {});
                                 },
-                                icon: const Icon(Icons.photo_filter_sharp),
+                                icon: const Icon(Icons.clear_outlined),
                               ),
                             ),
                           ),
-                      ]),
+                          if (widget.filtersOption != null)
+                            Positioned(
+                              bottom: 32,
+                              left: 0,
+                              child: Container(
+                                height: 38,
+                                width: 38,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withAlpha(100),
+                                  borderRadius: const BorderRadius.only(
+                                    topRight: Radius.circular(19),
+                                  ),
+                                ),
+                                child: IconButton(
+                                  iconSize: 20,
+                                  padding: const EdgeInsets.all(0),
+                                  onPressed: () async {
+                                    Uint8List? editedImage =
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ImageFilters(
+                                              image: image.bytes,
+                                              options: widget.filtersOption,
+                                            ),
+                                          ),
+                                        );
+
+                                    if (editedImage != null) {
+                                      image.load(editedImage);
+                                    }
+
+                                    setState(() {});
+                                  },
+                                  icon: const Icon(Icons.photo_filter_sharp),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                   ],
                 ),
               ),
@@ -469,129 +471,136 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         child: SingleChildScrollView(
           reverse: true,
           scrollDirection: Axis.horizontal,
-          child: Row(children: [
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              icon: Icon(Icons.undo,
+          child: Row(
+            children: [
+              IconButton(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                icon: Icon(
+                  Icons.undo,
                   color: layers.length > 1 || removedLayers.isNotEmpty
                       ? Colors.white
-                      : Colors.grey),
-              onPressed: () {
-                if (removedLayers.isNotEmpty) {
-                  layers.add(removedLayers.removeLast());
+                      : Colors.grey,
+                ),
+                onPressed: () {
+                  if (removedLayers.isNotEmpty) {
+                    layers.add(removedLayers.removeLast());
+                    setState(() {});
+                    return;
+                  }
+
+                  if (layers.length <= 1) return; // do not remove image layer
+
+                  undoLayers.add(layers.removeLast());
+
                   setState(() {});
-                  return;
-                }
+                },
+              ),
+              IconButton(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                icon: Icon(
+                  Icons.redo,
+                  color: undoLayers.isNotEmpty ? Colors.white : Colors.grey,
+                ),
+                onPressed: () {
+                  if (undoLayers.isEmpty) return;
 
-                if (layers.length <= 1) return; // do not remove image layer
+                  layers.add(undoLayers.removeLast());
 
-                undoLayers.add(layers.removeLast());
+                  setState(() {});
+                },
+              ),
+              if (widget.imagePickerOption.pickFromGallery)
+                Opacity(
+                  opacity: galleryPermission.isPermanentlyDenied ? 0.5 : 1,
+                  child: IconButton(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    icon: const Icon(Icons.photo),
+                    onPressed: () async {
+                      if (await Permission.photos.isPermanentlyDenied) {
+                        openAppSettings();
+                      }
 
-                setState(() {});
-              },
-            ),
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              icon: Icon(Icons.redo,
-                  color: undoLayers.isNotEmpty ? Colors.white : Colors.grey),
-              onPressed: () {
-                if (undoLayers.isEmpty) return;
+                      var image = await picker.pickImage(
+                        source: ImageSource.gallery,
+                      );
 
-                layers.add(undoLayers.removeLast());
+                      if (image == null) return;
 
-                setState(() {});
-              },
-            ),
-            if (widget.imagePickerOption.pickFromGallery)
-              Opacity(
-                opacity: galleryPermission.isPermanentlyDenied ? 0.5 : 1,
-                child: IconButton(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  icon: const Icon(Icons.photo),
-                  onPressed: () async {
-                    if (await Permission.photos.isPermanentlyDenied) {
-                      openAppSettings();
-                    }
+                      // loadImage(image);
 
-                    var image = await picker.pickImage(
-                      source: ImageSource.gallery,
+                      var imageItem = ImageItem(image);
+                      await imageItem.loader.future;
+
+                      layers.add(ImageLayerData(image: imageItem));
+                      setState(() {});
+                    },
+                  ),
+                ),
+              if (widget.imagePickerOption.captureFromCamera)
+                Opacity(
+                  opacity: cameraPermission.isPermanentlyDenied ? 0.5 : 1,
+                  child: IconButton(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    icon: const Icon(Icons.camera_alt),
+                    onPressed: () async {
+                      if (await Permission.camera.isPermanentlyDenied) {
+                        openAppSettings();
+                      }
+
+                      var image = await picker.pickImage(
+                        source: ImageSource.camera,
+                      );
+
+                      if (image == null) return;
+
+                      // loadImage(image);
+
+                      var imageItem = ImageItem(image);
+                      await imageItem.loader.future;
+
+                      layers.add(ImageLayerData(image: imageItem));
+                      setState(() {});
+                    },
+                  ),
+                ),
+              IconButton(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                icon: const Icon(Icons.check),
+                onPressed: () async {
+                  resetTransformation();
+                  setState(() {});
+
+                  var loadingScreen = showLoadingScreen(context);
+
+                  if (widget.outputFormat == o.OutputFormat.json) {
+                    var json = layers.map((e) => e.toJson()).toList();
+
+                    // if ((widget.outputFormat & 0xFE) > 0) {
+                    //   var editedImageBytes =
+                    //       await getMergedImage(widget.outputFormat & 0xFE);
+
+                    //   json.insert(0, {
+                    //     'type': 'MergedLayer',
+                    //     'image': editedImageBytes,
+                    //   });
+                    // }
+
+                    loadingScreen.hide();
+
+                    if (mounted) Navigator.pop(context, json);
+                  } else {
+                    var editedImageBytes = await getMergedImage(
+                      widget.outputFormat,
                     );
 
-                    if (image == null) return;
+                    loadingScreen.hide();
 
-                    // loadImage(image);
-
-                    var imageItem = ImageItem(image);
-                    await imageItem.loader.future;
-
-                    layers.add(ImageLayerData(image: imageItem));
-                    setState(() {});
-                  },
-                ),
+                    if (mounted) Navigator.pop(context, editedImageBytes);
+                  }
+                },
               ),
-            if (widget.imagePickerOption.captureFromCamera)
-              Opacity(
-                opacity: cameraPermission.isPermanentlyDenied ? 0.5 : 1,
-                child: IconButton(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  icon: const Icon(Icons.camera_alt),
-                  onPressed: () async {
-                    if (await Permission.camera.isPermanentlyDenied) {
-                      openAppSettings();
-                    }
-
-                    var image = await picker.pickImage(
-                      source: ImageSource.camera,
-                    );
-
-                    if (image == null) return;
-
-                    // loadImage(image);
-
-                    var imageItem = ImageItem(image);
-                    await imageItem.loader.future;
-
-                    layers.add(ImageLayerData(image: imageItem));
-                    setState(() {});
-                  },
-                ),
-              ),
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                resetTransformation();
-                setState(() {});
-
-                var loadingScreen = showLoadingScreen(context);
-
-                if (widget.outputFormat == o.OutputFormat.json) {
-                  var json = layers.map((e) => e.toJson()).toList();
-
-                  // if ((widget.outputFormat & 0xFE) > 0) {
-                  //   var editedImageBytes =
-                  //       await getMergedImage(widget.outputFormat & 0xFE);
-
-                  //   json.insert(0, {
-                  //     'type': 'MergedLayer',
-                  //     'image': editedImageBytes,
-                  //   });
-                  // }
-
-                  loadingScreen.hide();
-
-                  if (mounted) Navigator.pop(context, json);
-                } else {
-                  var editedImageBytes =
-                      await getMergedImage(widget.outputFormat);
-
-                  loadingScreen.hide();
-
-                  if (mounted) Navigator.pop(context, editedImageBytes);
-                }
-              },
-            ),
-          ]),
+            ],
+          ),
         ),
       ),
     ];
@@ -665,6 +674,10 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
       viewportSize.height / (currentImage.height / pixelRatio),
     );
 
+    if (scaleFactor == 1) {
+      resetTransformation();
+    }
+
     // widthRatio = currentImage.width / viewportSize.width;
     // heightRatio = currentImage.height / viewportSize.height;
     // pixelRatio = math.max(heightRatio, widthRatio);
@@ -672,92 +685,131 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     return Theme(
       data: ImageEditor.theme,
       child: Scaffold(
-        body: Stack(children: [
-          GestureDetector(
-            onScaleUpdate: (details) {
-              // print(details);
+        body: Stack(
+          children: [
+            GestureDetector(
+              onScaleUpdate: (details) {
+                // print(details);
 
-              // move
-              /* if (details.pointerCount == 1) {
+                // move
+                /* if (details.pointerCount == 1) {
                 // print(details.focalPointDelta);
                 x += details.focalPointDelta.dx;
                 y += details.focalPointDelta.dy;
                 setState(() {});
               } */
 
-              // scale
-              //if (details.pointerCount == 2) {
-              // print([details.horizontalScale, details.verticalScale]);
-              if (details.horizontalScale != 1) {
-                scaleFactor = lastScaleFactor *
-                    math.min(details.horizontalScale, details.verticalScale);
-                setState(() {});
-              }
-              //}
-            },
-            onScaleEnd: (details) {
-              lastScaleFactor = scaleFactor;
-            },
-            child: Center(
-              child: SizedBox(
-                height: currentImage.height / pixelRatio,
-                width: currentImage.width / pixelRatio,
-                child: Screenshot(
-                  controller: screenshotController,
-                  child: RotatedBox(
-                    quarterTurns: rotateValue,
-                    child: Transform(
-                      transform: Matrix4(
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        1,
-                        0,
-                        x,
-                        y,
-                        0,
-                        1 / scaleFactor,
-                      )..rotateY(flipValue),
-                      alignment: FractionalOffset.center,
-                      child: LayersViewer(
-                        layers: layers,
-                        onUpdate: () {
-                          setState(() {});
-                        },
-                        editable: true,
+                // scale
+                //if (details.pointerCount == 2) {
+                // print([details.horizontalScale, details.verticalScale]);
+                if (details.horizontalScale != 1) {
+                  scaleFactor =
+                      lastScaleFactor *
+                      math.min(details.horizontalScale, details.verticalScale);
+                  setState(() {});
+                }
+                //}
+              },
+              onScaleEnd: (details) {
+                lastScaleFactor = scaleFactor;
+              },
+              child: Center(
+                child: SizedBox(
+                  height: currentImage.height / pixelRatio,
+                  width: currentImage.width / pixelRatio,
+                  child: Screenshot(
+                    controller: screenshotController,
+                    child: RotatedBox(
+                      quarterTurns: rotateValue,
+                      child: Transform(
+                        transform: Matrix4(
+                          1,
+                          0,
+                          0,
+                          0,
+                          0,
+                          1,
+                          0,
+                          0,
+                          0,
+                          0,
+                          1,
+                          0,
+                          x,
+                          y,
+                          0,
+                          1 / scaleFactor,
+                        )..rotateY(flipValue),
+                        alignment: FractionalOffset.center,
+                        child: LayersViewer(
+                          layers: layers,
+                          onUpdate: () {
+                            setState(() {});
+                          },
+                          editable: true,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.25),
-              ),
-              child: SafeArea(
-                child: Row(
-                  children: filterActions,
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.25),
                 ),
+                child: SafeArea(child: Row(children: filterActions)),
               ),
             ),
-          ),
-          if (layers.length > 1)
+            if (layers.length > 1)
+              Positioned(
+                bottom: 64,
+                left: 0,
+                child: SafeArea(
+                  child: Container(
+                    height: 48,
+                    width: 48,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withAlpha(100),
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(19),
+                        bottomRight: Radius.circular(19),
+                      ),
+                    ),
+                    child: IconButton(
+                      iconSize: 20,
+                      padding: const EdgeInsets.all(0),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10),
+                              topLeft: Radius.circular(10),
+                            ),
+                          ),
+                          context: context,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => SafeArea(
+                            child: ManageLayersOverlay(
+                              layers: layers,
+                              onUpdate: () => setState(() {}),
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.layers),
+                    ),
+                  ),
+                ),
+              ),
             Positioned(
               bottom: 64,
-              left: 0,
+              right: 0,
               child: SafeArea(
                 child: Container(
                   height: 48,
@@ -766,65 +818,25 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                   decoration: BoxDecoration(
                     color: Colors.black.withAlpha(100),
                     borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(19),
-                      bottomRight: Radius.circular(19),
+                      topLeft: Radius.circular(19),
+                      bottomLeft: Radius.circular(19),
                     ),
                   ),
                   child: IconButton(
                     iconSize: 20,
                     padding: const EdgeInsets.all(0),
                     onPressed: () {
-                      showModalBottomSheet(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(10),
-                            topLeft: Radius.circular(10),
-                          ),
-                        ),
-                        context: context,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) => SafeArea(
-                          child: ManageLayersOverlay(
-                            layers: layers,
-                            onUpdate: () => setState(() {}),
-                          ),
-                        ),
-                      );
+                      resetTransformation();
                     },
-                    icon: const Icon(Icons.layers),
+                    icon: Icon(
+                      scaleFactor > 1 ? Icons.zoom_in_map : Icons.zoom_out_map,
+                    ),
                   ),
                 ),
               ),
             ),
-          Positioned(
-            bottom: 64,
-            right: 0,
-            child: SafeArea(
-              child: Container(
-                height: 48,
-                width: 48,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(100),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(19),
-                    bottomLeft: Radius.circular(19),
-                  ),
-                ),
-                child: IconButton(
-                  iconSize: 20,
-                  padding: const EdgeInsets.all(0),
-                  onPressed: () {
-                    resetTransformation();
-                  },
-                  icon: Icon(
-                    scaleFactor > 1 ? Icons.zoom_in_map : Icons.zoom_out_map,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ]),
+          ],
+        ),
         bottomNavigationBar: Container(
           // color: Colors.black45,
           alignment: Alignment.bottomCenter,
@@ -1032,8 +1044,9 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         showModalBottomSheet(
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(10),
-                                topLeft: Radius.circular(10)),
+                              topRight: Radius.circular(10),
+                              topLeft: Radius.circular(10),
+                            ),
                           ),
                           context: context,
                           backgroundColor: Colors.transparent,
@@ -1045,133 +1058,141 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                                     decoration: const BoxDecoration(
                                       color: Colors.black87,
                                       borderRadius: BorderRadius.only(
-                                          topRight: Radius.circular(10),
-                                          topLeft: Radius.circular(10)),
+                                        topRight: Radius.circular(10),
+                                        topLeft: Radius.circular(10),
+                                      ),
                                     ),
                                     padding: const EdgeInsets.all(20),
                                     height: 400,
                                     child: Column(
                                       children: [
                                         Center(
-                                            child: Text(
-                                          i18n('Slider Filter Color')
-                                              .toUpperCase(),
-                                          style: const TextStyle(
-                                              color: Colors.white),
-                                        )),
+                                          child: Text(
+                                            i18n(
+                                              'Slider Filter Color',
+                                            ).toUpperCase(),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
                                         const SizedBox(height: 20.0),
                                         Text(
                                           i18n('Slider Color'),
                                           style: const TextStyle(
-                                              color: Colors.white),
+                                            color: Colors.white,
+                                          ),
                                         ),
                                         const SizedBox(height: 10),
-                                        Row(children: [
-                                          Expanded(
-                                            child: BarColorPicker(
-                                              width: 300,
-                                              thumbColor: Colors.white,
-                                              cornerRadius: 10,
-                                              pickMode: PickMode.color,
-                                              colorListener: (int value) {
-                                                setS(() {
-                                                  setState(() {
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: BarColorPicker(
+                                                width: 300,
+                                                thumbColor: Colors.white,
+                                                cornerRadius: 10,
+                                                pickMode: PickMode.color,
+                                                colorListener: (int value) {
+                                                  setS(() {
+                                                    setState(() {
+                                                      blurLayer.color = Color(
+                                                        value,
+                                                      );
+                                                    });
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            TextButton(
+                                              child: Text(i18n('Reset')),
+                                              onPressed: () {
+                                                setState(() {
+                                                  setS(() {
                                                     blurLayer.color =
-                                                        Color(value);
+                                                        Colors.transparent;
                                                   });
                                                 });
                                               },
                                             ),
-                                          ),
-                                          TextButton(
-                                            child: Text(
-                                              i18n('Reset'),
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                setS(() {
-                                                  blurLayer.color =
-                                                      Colors.transparent;
-                                                });
-                                              });
-                                            },
-                                          )
-                                        ]),
+                                          ],
+                                        ),
                                         const SizedBox(height: 5.0),
                                         Text(
                                           i18n('Blur Radius'),
                                           style: const TextStyle(
-                                              color: Colors.white),
+                                            color: Colors.white,
+                                          ),
                                         ),
                                         const SizedBox(height: 10.0),
-                                        Row(children: [
-                                          Expanded(
-                                            child: Slider(
-                                              activeColor: Colors.white,
-                                              inactiveColor: Colors.grey,
-                                              value: blurLayer.radius,
-                                              min: 0.0,
-                                              max: 10.0,
-                                              onChanged: (v) {
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Slider(
+                                                activeColor: Colors.white,
+                                                inactiveColor: Colors.grey,
+                                                value: blurLayer.radius,
+                                                min: 0.0,
+                                                max: 10.0,
+                                                onChanged: (v) {
+                                                  setS(() {
+                                                    setState(() {
+                                                      blurLayer.radius = v;
+                                                    });
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            TextButton(
+                                              child: Text(i18n('Reset')),
+                                              onPressed: () {
                                                 setS(() {
                                                   setState(() {
-                                                    blurLayer.radius = v;
+                                                    blurLayer.color =
+                                                        Colors.white;
                                                   });
                                                 });
                                               },
                                             ),
-                                          ),
-                                          TextButton(
-                                            child: Text(
-                                              i18n('Reset'),
-                                            ),
-                                            onPressed: () {
-                                              setS(() {
-                                                setState(() {
-                                                  blurLayer.color =
-                                                      Colors.white;
-                                                });
-                                              });
-                                            },
-                                          )
-                                        ]),
+                                          ],
+                                        ),
                                         const SizedBox(height: 5.0),
                                         Text(
                                           i18n('Color Opacity'),
                                           style: const TextStyle(
-                                              color: Colors.white),
+                                            color: Colors.white,
+                                          ),
                                         ),
                                         const SizedBox(height: 10.0),
-                                        Row(children: [
-                                          Expanded(
-                                            child: Slider(
-                                              activeColor: Colors.white,
-                                              inactiveColor: Colors.grey,
-                                              value: blurLayer.opacity,
-                                              min: 0.00,
-                                              max: 1.0,
-                                              onChanged: (v) {
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Slider(
+                                                activeColor: Colors.white,
+                                                inactiveColor: Colors.grey,
+                                                value: blurLayer.opacity,
+                                                min: 0.00,
+                                                max: 1.0,
+                                                onChanged: (v) {
+                                                  setS(() {
+                                                    setState(() {
+                                                      blurLayer.opacity = v;
+                                                    });
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            TextButton(
+                                              child: Text(i18n('Reset')),
+                                              onPressed: () {
                                                 setS(() {
                                                   setState(() {
-                                                    blurLayer.opacity = v;
+                                                    blurLayer.opacity = 0.0;
                                                   });
                                                 });
                                               },
                                             ),
-                                          ),
-                                          TextButton(
-                                            child: Text(
-                                              i18n('Reset'),
-                                            ),
-                                            onPressed: () {
-                                              setS(() {
-                                                setState(() {
-                                                  blurLayer.opacity = 0.0;
-                                                });
-                                              });
-                                            },
-                                          )
-                                        ]),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -1282,9 +1303,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
 
     layers.clear();
 
-    layers.add(BackgroundLayerData(
-      image: currentImage,
-    ));
+    layers.add(BackgroundLayerData(image: currentImage));
 
     setState(() {});
   }
@@ -1313,14 +1332,9 @@ class BottomButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: Colors.white,
-            ),
+            Icon(icon, color: Colors.white),
             const SizedBox(height: 8),
-            Text(
-              i18n(text),
-            ),
+            Text(i18n(text)),
           ],
         ),
       ),
@@ -1409,9 +1423,7 @@ class _ImageCropperState extends State<ImageCropper> {
             extendedImageEditorKey: _controller,
             mode: ExtendedImageMode.editor,
             initEditorConfigHandler: (state) {
-              return EditorConfig(
-                cropAspectRatio: currentRatio,
-              );
+              return EditorConfig(cropAspectRatio: currentRatio);
             },
           ),
         ),
@@ -1476,12 +1488,7 @@ class _ImageCropperState extends State<ImageCropper> {
                 Container(
                   height: 80,
                   decoration: const BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black,
-                        blurRadius: 10,
-                      ),
-                    ],
+                    boxShadow: [BoxShadow(color: Colors.black, blurRadius: 10)],
                   ),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -1532,17 +1539,20 @@ class _ImageCropperState extends State<ImageCropper> {
                               setState(() {});
                             },
                             child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                child: Text(
-                                  i18n(ratio.title),
-                                  style: TextStyle(
-                                    color: currentRatio == ratio.ratio
-                                        ? Colors.white
-                                        : Colors.grey,
-                                  ),
-                                )),
-                          )
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              child: Text(
+                                i18n(ratio.title),
+                                style: TextStyle(
+                                  color: currentRatio == ratio.ratio
+                                      ? Colors.white
+                                      : Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -1609,7 +1619,7 @@ class _ImageFiltersState extends State<ImageFilters> {
   void initState() {
     filters = [
       PresetFilters.none,
-      ...(widget.options?.filters ?? presetFiltersList.sublist(1))
+      ...(widget.options?.filters ?? presetFiltersList.sublist(1)),
     ];
 
     // decodedImage = img.decodeImage(widget.image)!;
@@ -1643,10 +1653,7 @@ class _ImageFiltersState extends State<ImageFilters> {
             controller: screenshotController,
             child: Stack(
               children: [
-                Image.memory(
-                  widget.image,
-                  fit: BoxFit.cover,
-                ),
+                Image.memory(widget.image, fit: BoxFit.cover),
                 FilterAppliedImage(
                   key: Key('selectedFilter:${selectedFilter.name}'),
                   image: widget.image,
@@ -1665,72 +1672,78 @@ class _ImageFiltersState extends State<ImageFilters> {
         bottomNavigationBar: SafeArea(
           child: SizedBox(
             height: 160,
-            child: Column(children: [
-              SizedBox(
-                height: 40,
-                child: selectedFilter == PresetFilters.none
-                    ? Container()
-                    : selectedFilter.build(
-                        Slider(
-                          min: 0,
-                          max: 1,
-                          divisions: 100,
-                          value: filterOpacity,
-                          onChanged: (value) {
-                            filterOpacity = value;
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 40,
+                  child: selectedFilter == PresetFilters.none
+                      ? Container()
+                      : selectedFilter.build(
+                          Slider(
+                            min: 0,
+                            max: 1,
+                            divisions: 100,
+                            value: filterOpacity,
+                            onChanged: (value) {
+                              filterOpacity = value;
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                ),
+                SizedBox(
+                  height: 120,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      for (var filter in filters)
+                        GestureDetector(
+                          onTap: () {
+                            selectedFilter = filter;
                             setState(() {});
                           },
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 64,
+                                width: 64,
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(48),
+                                  border: Border.all(
+                                    color: selectedFilter == filter
+                                        ? Colors.white
+                                        : Colors.black,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(48),
+                                  child: FilterAppliedImage(
+                                    key: Key(
+                                      'filterPreviewButton:${filter.name}',
+                                    ),
+                                    image: widget.image,
+                                    filter: filter,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                i18n(filter.name),
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-              ),
-              SizedBox(
-                height: 120,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    for (var filter in filters)
-                      GestureDetector(
-                        onTap: () {
-                          selectedFilter = filter;
-                          setState(() {});
-                        },
-                        child: Column(children: [
-                          Container(
-                            height: 64,
-                            width: 64,
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(48),
-                              border: Border.all(
-                                color: selectedFilter == filter
-                                    ? Colors.white
-                                    : Colors.black,
-                                width: 2,
-                              ),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(48),
-                              child: FilterAppliedImage(
-                                key: Key('filterPreviewButton:${filter.name}'),
-                                image: widget.image,
-                                filter: filter,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            i18n(filter.name),
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ]),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ]),
+              ],
+            ),
           ),
         ),
       ),
@@ -1778,25 +1791,29 @@ class _FilterAppliedImageState extends State<FilterAppliedImage> {
 
       filterTask.filter((image) {
         for (final pixel in image) {
-          pixel.r = matrix[0] * pixel.r +
+          pixel.r =
+              matrix[0] * pixel.r +
               matrix[1] * pixel.g +
               matrix[2] * pixel.b +
               matrix[3] * pixel.a +
               matrix[4];
 
-          pixel.g = matrix[5] * pixel.r +
+          pixel.g =
+              matrix[5] * pixel.r +
               matrix[6] * pixel.g +
               matrix[7] * pixel.b +
               matrix[8] * pixel.a +
               matrix[9];
 
-          pixel.b = matrix[10] * pixel.r +
+          pixel.b =
+              matrix[10] * pixel.r +
               matrix[11] * pixel.g +
               matrix[12] * pixel.b +
               matrix[13] * pixel.a +
               matrix[14];
 
-          pixel.a = matrix[15] * pixel.r +
+          pixel.a =
+              matrix[15] * pixel.r +
               matrix[16] * pixel.g +
               matrix[17] * pixel.b +
               matrix[18] * pixel.a +
@@ -1806,14 +1823,17 @@ class _FilterAppliedImageState extends State<FilterAppliedImage> {
         return image;
       });
 
-      filterTask.getBytesThread().then((result) {
-        if (widget.onProcess != null && result != null) {
-          widget.onProcess!(result);
-        }
-      }).catchError((err, stack) {
-        // print(err);
-        // print(stack);
-      });
+      filterTask
+          .getBytesThread()
+          .then((result) {
+            if (widget.onProcess != null && result != null) {
+              widget.onProcess!(result);
+            }
+          })
+          .catchError((err, stack) {
+            // print(err);
+            // print(stack);
+          });
 
       // final image_editor.ImageEditorOption option =
       //     image_editor.ImageEditorOption();
@@ -1837,20 +1857,12 @@ class _FilterAppliedImageState extends State<FilterAppliedImage> {
   @override
   Widget build(BuildContext context) {
     if (widget.filter.filters.isEmpty) {
-      return Image.memory(
-        widget.image,
-        fit: widget.fit,
-      );
+      return Image.memory(widget.image, fit: widget.fit);
     }
 
     return Opacity(
       opacity: widget.opacity,
-      child: widget.filter.build(
-        Image.memory(
-          widget.image,
-          fit: widget.fit,
-        ),
-      ),
+      child: widget.filter.build(Image.memory(widget.image, fit: widget.fit)),
     );
   }
 }
@@ -1994,8 +2006,9 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
-              color:
-                  widget.options.showBackground ? null : currentBackgroundColor,
+              color: widget.options.showBackground
+                  ? null
+                  : currentBackgroundColor,
               image: widget.options.showBackground
                   ? DecorationImage(
                       image: Image.memory(widget.image.bytes).image,
@@ -2016,9 +2029,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
           child: Container(
             height: 80,
             decoration: const BoxDecoration(
-              boxShadow: [
-                BoxShadow(blurRadius: 2),
-              ],
+              boxShadow: [BoxShadow(blurRadius: 2)],
             ),
             child: ListView(
               scrollDirection: Axis.horizontal,
