@@ -661,8 +661,8 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     pixelRatio = MediaQuery.of(context).devicePixelRatio;
 
     minScaleFactor = math.min(
-      viewportSize.width / currentImage.width,
-      viewportSize.height / currentImage.height,
+      currentImage.width / viewportSize.width,
+      currentImage.height / viewportSize.height,
     );
       
     // widthRatio = currentImage.width / viewportSize.width;
