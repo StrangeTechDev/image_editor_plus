@@ -619,7 +619,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
   double widthRatio = 1, heightRatio = 1, pixelRatio = 1;
 
   resetTransformation() {
-    scaleFactor = math.max(1, minScaleFactor);
+    lastScaleFactor = scaleFactor = math.max(1, minScaleFactor);
     x = 0;
     y = 0;
     setState(() {});
@@ -661,10 +661,10 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     pixelRatio = MediaQuery.of(context).devicePixelRatio;
 
     minScaleFactor = math.min(
-      currentImage.width / viewportSize.width,
-      currentImage.height / viewportSize.height,
+      viewportSize.width / (currentImage.width / pixelRatio),
+      viewportSize.height / (currentImage.height / pixelRatio),
     );
-      
+
     // widthRatio = currentImage.width / viewportSize.width;
     // heightRatio = currentImage.height / viewportSize.height;
     // pixelRatio = math.max(heightRatio, widthRatio);
@@ -678,22 +678,22 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
               // print(details);
 
               // move
-              if (details.pointerCount == 1) {
+              /* if (details.pointerCount == 1) {
                 // print(details.focalPointDelta);
                 x += details.focalPointDelta.dx;
                 y += details.focalPointDelta.dy;
                 setState(() {});
-              }
+              } */
 
               // scale
-              if (details.pointerCount == 2) {
-                // print([details.horizontalScale, details.verticalScale]);
-                if (details.horizontalScale != 1) {
-                  scaleFactor = lastScaleFactor *
-                      math.min(details.horizontalScale, details.verticalScale);
-                  setState(() {});
-                }
+              //if (details.pointerCount == 2) {
+              // print([details.horizontalScale, details.verticalScale]);
+              if (details.horizontalScale != 1) {
+                scaleFactor = lastScaleFactor *
+                    math.min(details.horizontalScale, details.verticalScale);
+                setState(() {});
               }
+              //}
             },
             onScaleEnd: (details) {
               lastScaleFactor = scaleFactor;
